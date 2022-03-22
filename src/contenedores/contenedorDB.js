@@ -1,45 +1,54 @@
-const { promises: fs } = require('fs');
-const {  Schema, model } = require('mongoose');
-const Product = require ('../../../models/schema');
-require ('../../config');
+import mongoose from 'mongoose';
+import config from '../config'
+
+(async ()=>{
+    try{
+        const db = await mongoose.connect(config.mongoRemote.cnxStr);
+        console.log('DB connected');
+    }
+    catch (err){
+        console.log(err);
+    }
+})()
 
 class DBContainer{
-    constructor(config){
-        this.config = config
+    constructor(collection , productSchema){
+        this.col = mongoose.model(collection, productSchema)
     }
 
     listarAll = async()=>{
-        const products = await Product.find();
+        const products = await this.col.find();
         console.log(products);
     }
 
     getProduct = async(id)=>{
-        const product = await  Product.find({id : id});
+        const product = await  this.col.find({id : id});
     }
     
     update = async (id, updatedProd)=>{
-        const updateProd = await Product.update({id : id}, {title : updatedProd});
+        const updateProd = await this.col.update({id : id}, {title : updatedProd});
         console.log(updateProd);
     }
 
-    save = async (id,title,desc,img,price,stock,timeStamp)=>{
-        const product = new Product({
-            id: id,
-            title: title,
-            description: desc,
-            img: img,
-            price: price,
-            stock: stock,
-            timeStamp: timeStamp
-        })
-        const productSaved = await product.save()
-        console.log(productSaved);
+    save = async (data)=>{
+        try{
+            console.log('data recibied', data);
+            const product = new this.col(data);
+            console.log(this.col);
+            const productSaved = await product.save()
+            console.log('data saved',productSaved);
+        }
+        catch (err) {
+            console.log(err);
+        }
+        
     }
     delete = async(id)=>{
-        const deleted = Product.deleteOne({id: id})
+        const deleted = this.col.deleteOne({_id : id})
+        console.log(`El producto ${deleted} fue eiminado.`);
     }
 }
-module.export = DBContainer
+export default DBContainer
 //MONGOOSE
     // async createProduct(id,title,description,img,price,stock){
     //     

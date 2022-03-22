@@ -1,8 +1,9 @@
 //Conexion al server de express
 const express = require ('express');
-const {Router} = express;
-import prodsRouter from './routers/productoRout';
-import cartRouter from './routers/carritoRout';
+import morgan from 'morgan';
+import prodsRouter from './routers/producto.routes';
+import cartRouter from './routers/carrito.routes';
+
 
 const app = express()
 const PORT = 8080
@@ -13,6 +14,8 @@ app.use(express.static('public'))
 
 app.use('/api/productos', prodsRouter)
 app.use('/api/carrito', cartRouter)
+
+app.use(morgan('dev'))
 
 
 const server = app.listen(PORT, () => {

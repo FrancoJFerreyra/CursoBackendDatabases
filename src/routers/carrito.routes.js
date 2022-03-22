@@ -1,5 +1,5 @@
 
-const {Router} = express;
+import { Router } from "express";
 
 const cartRouter = new Router;
 
