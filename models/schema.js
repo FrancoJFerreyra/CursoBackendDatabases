@@ -1,16 +1,15 @@
 import {Schema,model} from 'mongoose'
 
 const productSchema = new Schema({
-    id : {type: Number},
-    title : {type: String, default: 'Sin nombre asignado'},
-    description : {type: String, default: 'Sin descripcion asignada'},
-    img : {type: String, default:'Sin imagen asignada'},
-    price : {type: Number, default: 0},
-    stock : {type: Number, default: 0}
+    title : {type: String, required: true},
+    description : {type: String, required : true},
+    img : {type: String, required: true},
+    price : {type: Number, required: true},
+    stock : {type: Number, required: true}
 },{
     timestamps : true,
-    versionKey : false,
-    _id : false,
+    versionKey : false
 })
 
-export default productSchema;
+module.exports.schema = productSchema;
+module.exports.model = model('Product', productSchema);
