@@ -2,7 +2,7 @@
 require("dotenv").config();
 import express from "express";
 const {Router} = express;
-const product = process.env.DB === "mongo" ? require('../daos/productos/productoMongo') :
+const product = process.env.DB === "mongo" ? require('../daos/productos/productoFirebase') :
 require('../daos/productos/productoArchivo');
   
   

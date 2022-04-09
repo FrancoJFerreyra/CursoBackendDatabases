@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import config from '../config';
 const admin = require('firebase-admin')
 import { initializeApp } from "firebase/app";
-import { addDoc, collection, getDocs, doc , getDoc, serverTimestamp, setDoc, deleteDoc, collectionGroup} from 'firebase/firestore';
+import { addDoc, collection, getDocs, doc , getDoc, serverTimestamp, setDoc, deleteDoc, documentId, updateDoc, arrayUnion } from 'firebase/firestore';
 (async ()=>{
     try{
         const app = await initializeApp(config.firebaseRemote);
@@ -23,10 +23,6 @@ class FBContainer{
         products.forEach(doc => {
             doc.data();
         });
-    }
-
-    getProdsCart = async (idCart) =>{
-        
     }
 
     getOne = async(id)=>{
@@ -52,18 +48,7 @@ class FBContainer{
             console.log(`${err}`);
         }
     }
-    createCart = async (data)=>{
-        
-        const cart = collection(collection(this.db,'Carritos'),`cart ${data.id}`)
-
-        try{
-            await addDoc(cart, data);
-            console.log('cartData saved');
-        }
-        catch (err) {
-            console.log(err);
-        }
-    }
+    
     save = async (data)=>{
             console.log('DataRecibed', data);
             const dataWTime = {...data, timeStamp: serverTimestamp()}
@@ -86,6 +71,27 @@ class FBContainer{
         }
         
     }
+    //CART
+    createCart = async (data)=>{
+        const dataWTime = {...data, timeStamp: serverTimestamp()}
+        try {
+            await addDoc(collection(this.db, "Carritos"),dataWTime)
+        } catch (err) {
+            console.log(err);
+        }
+    }
+    addProd = async (id, data) =>{
+        const docRef = await doc(this.db, "Carritos", id);
+        const docSnap = await getDoc(docRef);
+        try{
+          await setDoc(docRef, {products: data})
+          console.log(`Producto agregado: ${data.title}`);
+        }
+        catch (err){
+          console.log(err);
+        }
+      }
 }
 
 export default FBContainer;
+// await setDoc(doc(newCart, 'Products', dataWTime)) const dataWTime = {...data, timeStamp: serverTimestamp()}

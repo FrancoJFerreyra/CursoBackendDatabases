@@ -62,17 +62,42 @@ class DBContainer {
   };
 
   //Cart
+  createCart = async (data) => {
+    console.log("data recibied", data);
+    const product = new this.model(data);
+    try {
+      await product.save();
+      console.log("data saved", product);
+    } catch (err) {
+      console.log(err);
+    }
+};
   addProd = async (id, data) =>{
-    const cart = await this.model.findById({ _id: id });
-    console.log(cart.products);
-    const addProduct = cart.products.push(data);
+    const cart = await this.model.findById({_id : id});
+    cart.products.push(data);
     try{
-      addProduct.save()
-      console.log('Producto agregado');
+      cart.save()
+      console.log(`Producto agregado: ${data.title}`);
     }
     catch (err){
       console.log(err);
     }
+  }
+  deleteProd = async (idCart, idProd)=>{
+    const cart = await this.model.findById({ _id: idCart });
+    console.log(`Cart : ${idCart}, product : ${idProd}, ${cart}`);
+    const products = cart.products;
+    console.log(products[0]._id);
+    const find = products.findIndex(e => e._id === idProd)
+    console.log(find);
+    products.splice(find, 1)
+    try {
+      await this.model.updateOne({_id : idCart}, {$set:{products:products}}) 
+      console.log(`Producto con id: ${idProd} fue eliminado`);
+    } catch (err) {
+      console.log(err);
+    }
+
   }
 }
 
